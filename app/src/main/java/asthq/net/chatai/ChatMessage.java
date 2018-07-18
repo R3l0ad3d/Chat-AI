@@ -32,4 +32,12 @@ public class ChatMessage {
     public void setMsgUser(String msgUser) {
         this.msgUser = msgUser;
     }
+
+    @Override
+    public String toString() {
+        return "ChatMessage{" +
+                "msgText='" + msgText + '\'' +
+                ", msgUser='" + msgUser + '\'' +
+                '}';
+    }
 }

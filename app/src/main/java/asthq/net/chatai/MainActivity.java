@@ -24,7 +24,9 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
@@ -33,17 +35,21 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 public class MainActivity extends AppCompatActivity implements AIListener {
     RecyclerView recyclerView;
     EditText editText;
     RelativeLayout addBtn;
     DatabaseReference ref;
+    Query query;
     FirebaseRecyclerAdapter<ChatMessage,chat_rec> adapter;
+    FirebaseRecyclerOptions<ChatMessage> options;
     Boolean flagFab = true;
 
     private AIService aiService;
@@ -63,8 +69,8 @@ public class MainActivity extends AppCompatActivity implements AIListener {
         recyclerView.setLayoutManager(linearLayoutManager);
 
         ref = FirebaseDatabase.getInstance().getReference().child("root");
-
         ref.keepSynced(true);
+        query=FirebaseDatabase.getInstance().getReference().child("root").child("chat");
 
         //AI Configuration
         final AIConfiguration config = new AIConfiguration("933f2db88c0945ab9f485ccfb27660a0",
@@ -159,11 +165,21 @@ public class MainActivity extends AppCompatActivity implements AIListener {
             }
         });
 
-        //adapter for recycler view
-        adapter = new FirebaseRecyclerAdapter<ChatMessage, chat_rec>(ChatMessage.class,R.layout.msglist,chat_rec.class,ref.child("chat")) {
-            @Override
-            protected void populateViewHolder(chat_rec viewHolder, ChatMessage model, int position) {
 
+        options = new FirebaseRecyclerOptions.Builder<ChatMessage>().setQuery(query,ChatMessage.class).build();
+
+        //adapter for recycler view
+        adapter = new FirebaseRecyclerAdapter<ChatMessage, chat_rec>(options) {
+            @NonNull
+            @Override
+            public chat_rec onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.msglist,parent,false);
+                return new chat_rec(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull chat_rec viewHolder, int i, @NonNull ChatMessage model) {
+                Log.d("TAG", "onBindViewHolder: "+model.toString());
                 if (model.getMsgUser().equals("user")) {
 
 
@@ -179,6 +195,7 @@ public class MainActivity extends AppCompatActivity implements AIListener {
                     viewHolder.leftText.setVisibility(View.VISIBLE);
                 }
             }
+
         };
 
         adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
@@ -204,6 +221,16 @@ public class MainActivity extends AppCompatActivity implements AIListener {
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        adapter.startListening();
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.stopListening();
+    }
     public void ImageViewAnimatedChange(Context c, final ImageView v, final Bitmap new_image) {
         final Animation anim_out = AnimationUtils.loadAnimation(c, R.anim.zoom_out);
         final Animation anim_in  = AnimationUtils.loadAnimation(c, R.anim.zoom_in);
