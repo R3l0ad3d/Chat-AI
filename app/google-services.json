@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "896877337614",
+    "firebase_url": "https://chatai-210603.firebaseio.com",
+    "project_id": "chatai-210603",
+    "storage_bucket": "chatai-210603.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:896877337614:android:ee57c6081c54aa95",
+        "android_client_info": {
+          "package_name": "asthq.net.chatai"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "896877337614-nihup1rdnhiov9vih1hurh7uek3c1t9a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGVCWML3s5bZf6A-FlB43MFmkY_8eKAJQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
